@@ -37,7 +37,7 @@ const createLanguageClient = (
     debug: {
       module: serverModulePath,
       transport: TransportKind.ipc,
-      options: { execArgv: ['--nolazy', '--inspect=6019'] }
+      options: { execArgv: ["--nolazy", "--inspect=6019"] }
     }
   };
 
@@ -45,7 +45,7 @@ const createLanguageClient = (
     documentSelector: [{ scheme: "file", language: "json" }],
     synchronize: {
       // configurationSection: "example",
-      fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
+      fileEvents: vscode.workspace.createFileSystemWatcher("**/.clientrc")
     }
   };
 
@@ -104,13 +104,13 @@ const updateContent = (
       panel.webview.html = previewHtml
         .replace(/{{\s*(\w+)\s*}}/g, (str, key) => {
           switch (key) {
-            case 'content':
+            case "content":
               return html;
-            case 'mediaPath':
+            case "mediaPath":
               return getMediaPath(context);
-            case 'style':
+            case "style":
               return `<style>${style}</style>`;
-            case 'script':
+            case "script":
               return `<script>${script}</script>`;
             default:
               return str;

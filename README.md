@@ -7,18 +7,20 @@
 
 ```javascript
 panel.webview.html = previewHtml
-.replace(/{{\s*(\w+)\s*}}/g, (str, key) => {
-	switch (key) {
-		case "content":
-			return  html;
-		case  'mediaPath':
-			return  getMediaPath(context);
-		case  'style':
-			return  `<style>${style}</style>`;
-		case  'script':
-			return  `<script>${script}</script>`;
-		default:
-			return  str;
+  .replace(/{{\s*(\w+)\s*}}/g, (str, key) => {
+    switch (key) {
+      case "content":
+        return html;
+      case "mediaPath":
+        return getMediaPath(context);
+      case "style":
+        return `<style>${style}</style>`;
+      case "script":
+        return `<script>${script}</script>`;
+      default:
+        return str;
+    }
+  });
 }
 ```
 
