@@ -1,50 +1,38 @@
 import * as jsonToAst from "json-to-ast";
 
+import { warning, header, grid, reference } from "./rules";
+
 export type JsonAST = jsonToAst.AstJsonEntity | undefined;
 
 export interface LinterProblem<TKey> {
-    key: TKey;
-    loc: jsonToAst.AstLocation;
+  key: TKey;
+  loc: jsonToAst.AstLocation;
 }
 
-export function makeLint<TProblemKey>(
-    json: string, 
-    validateProperty: (property: jsonToAst.AstProperty) => LinterProblem<TProblemKey>[],
-    validateObject: (property: jsonToAst.AstObject) => LinterProblem<TProblemKey>[]
-): LinterProblem<TProblemKey>[] {
+export function makeLint<TProblemKey>(json: string): LinterProblem<TProblemKey>[] {
 
-    function walk(
-        node: jsonToAst.AstJsonEntity, 
-        cbProp: (property: jsonToAst.AstProperty) => void,
-        cbObj: (property: jsonToAst.AstObject) => void
-    ) {
-        switch (node.type) {
-            case 'Array':
-                node.children.forEach((item: jsonToAst.AstJsonEntity) => {
-                    walk(item, cbProp, cbObj);
-                });
-                break;
-            case 'Object':
-                cbObj(node);
-    
-                node.children.forEach((property: jsonToAst.AstProperty) => {
-                    cbProp(property);
-                    walk(property.value, cbProp, cbObj);
-                });
-                break;
-        }
-    }
+  function parseJson(json: string): JsonAST {
+    return jsonToAst(json);
+  }
 
-    function parseJson(json: string):JsonAST  {return jsonToAst(json); }
+  const errors: LinterProblem<TProblemKey>[] = [];
+  const ast: JsonAST = parseJson(json);
 
-    const errors: LinterProblem<TProblemKey>[] = [];
-    const ast: JsonAST = parseJson(json);
+  if (ast && ast.type === "Object") {
 
-    if (ast) {
-        walk(ast, 
-            (property: jsonToAst.AstProperty) => errors.concat(...validateProperty(property)), 
-            (obj: jsonToAst.AstObject) => errors.concat(...validateObject(obj)));
-    }
+    let errorsLint = [];
+    errorsLint.push(...warning(ast) || []);
+    errorsLint.push(...header(ast) || []);
+    errorsLint.push(...grid(ast) || []);
+    errorsLint.push(...reference(ast) || []);
+    errorsLint = errorsLint.filter(Boolean);
+    console.log(errorsLint);
+    errorsLint = errorsLint.map(item => ({
+      key: item.code,
+      loc: item.location
+    }));
+    errors.push(...errorsLint);
+  }
 
-    return errors;
+  return errors;
 }

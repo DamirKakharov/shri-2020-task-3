@@ -61,7 +61,8 @@ export function activate(context: ExtensionContext) {
 	let serverMain = readJSONFile(context.asAbsolutePath('./server/package.json')).main;
 	let serverModule = context.asAbsolutePath(path.join('server', serverMain));
 
-	let debugOptions = { execArgv: ['--nolazy', '--inspect=' + (9000 + Math.round(Math.random() * 10000))] };
+	// let debugOptions = { execArgv: ['--nolazy', '--inspect=' + (9000 + Math.round(Math.random() * 10000))] };
+	let debugOptions = { execArgv: ['--nolazy', '--inspect=6666'] };
 
 	let serverOptions: ServerOptions = {
 		run: { module: serverModule, transport: TransportKind.ipc },
@@ -81,7 +82,7 @@ export function activate(context: ExtensionContext) {
 	let clientOptions: LanguageClientOptions = {
 		documentSelector,
 		initializationOptions: {
-			handledSchemaProtocols: ['file'] 
+			handledSchemaProtocols: ['file']
 		},
 		synchronize: {
 			configurationSection: ['json', 'http'],
